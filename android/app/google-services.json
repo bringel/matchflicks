@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "479366644790",
+    "project_id": "matchflicks",
+    "storage_bucket": "matchflicks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479366644790:android:660ba40ddfd50808368497",
+        "android_client_info": {
+          "package_name": "com.matchflicks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479366644790-96r4805igqnasj1dc2ti7rlcvk63vkng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCB3K3FCvlpvqAyXmduF_zmDVIGyFlNcwI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "479366644790-96r4805igqnasj1dc2ti7rlcvk63vkng.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "479366644790-a4463vom1bpe4onn6kq6qop4avofruc8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bringel.Matchflicks"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
