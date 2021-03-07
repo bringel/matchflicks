@@ -110,6 +110,14 @@
 		"--tw-bg-opacity": 1,
 		"backgroundColor": "rgba(19, 25, 31, var(--tw-bg-opacity))"
 	},
+	"bg-white": {
+		"--tw-bg-opacity": 1,
+		"backgroundColor": "rgba(255, 255, 255, var(--tw-bg-opacity))"
+	},
+	"bg-black": {
+		"--tw-bg-opacity": 1,
+		"backgroundColor": "rgba(0, 0, 0, var(--tw-bg-opacity))"
+	},
 	"bg-opacity-0": {
 		"--tw-bg-opacity": 0
 	},
@@ -343,6 +351,20 @@
 		"borderRightColor": "rgba(19, 25, 31, var(--tw-border-opacity))",
 		"borderBottomColor": "rgba(19, 25, 31, var(--tw-border-opacity))",
 		"borderLeftColor": "rgba(19, 25, 31, var(--tw-border-opacity))"
+	},
+	"border-white": {
+		"--tw-border-opacity": 1,
+		"borderTopColor": "rgba(255, 255, 255, var(--tw-border-opacity))",
+		"borderRightColor": "rgba(255, 255, 255, var(--tw-border-opacity))",
+		"borderBottomColor": "rgba(255, 255, 255, var(--tw-border-opacity))",
+		"borderLeftColor": "rgba(255, 255, 255, var(--tw-border-opacity))"
+	},
+	"border-black": {
+		"--tw-border-opacity": 1,
+		"borderTopColor": "rgba(0, 0, 0, var(--tw-border-opacity))",
+		"borderRightColor": "rgba(0, 0, 0, var(--tw-border-opacity))",
+		"borderBottomColor": "rgba(0, 0, 0, var(--tw-border-opacity))",
+		"borderLeftColor": "rgba(0, 0, 0, var(--tw-border-opacity))"
 	},
 	"border-opacity-0": {
 		"--tw-border-opacity": 0
@@ -6419,6 +6441,12 @@
 	"ring-offset-grey-900": {
 		"--tw-ring-offset-color": "#13191F"
 	},
+	"ring-offset-white": {
+		"--tw-ring-offset-color": "#FFFFFF"
+	},
+	"ring-offset-black": {
+		"--tw-ring-offset-color": "#000000"
+	},
 	"ring-offset-0": {
 		"--tw-ring-offset-width": 0
 	},
@@ -6541,6 +6569,14 @@
 	"ring-grey-900": {
 		"--tw-ring-opacity": 1,
 		"--tw-ring-color": "rgba(19, 25, 31, var(--tw-ring-opacity))"
+	},
+	"ring-white": {
+		"--tw-ring-opacity": 1,
+		"--tw-ring-color": "rgba(255, 255, 255, var(--tw-ring-opacity))"
+	},
+	"ring-black": {
+		"--tw-ring-opacity": 1,
+		"--tw-ring-color": "rgba(0, 0, 0, var(--tw-ring-opacity))"
 	},
 	"ring-opacity-0": {
 		"--tw-ring-opacity": 0
@@ -6706,6 +6742,14 @@
 	"text-grey-900": {
 		"--tw-text-opacity": 1,
 		"color": "rgba(19, 25, 31, var(--tw-text-opacity))"
+	},
+	"text-white": {
+		"--tw-text-opacity": 1,
+		"color": "rgba(255, 255, 255, var(--tw-text-opacity))"
+	},
+	"text-black": {
+		"--tw-text-opacity": 1,
+		"color": "rgba(0, 0, 0, var(--tw-text-opacity))"
 	},
 	"text-opacity-0": {
 		"--tw-text-opacity": 0

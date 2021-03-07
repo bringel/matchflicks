@@ -1,11 +1,12 @@
 import React from 'react';
-import { SafeAreaView, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
+import { Login } from './screens/Login/Login';
 
 const App = () => {
   return (
     <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView />
+      <StatusBar barStyle="light-content" />
+      <Login />
     </>
   );
 };
