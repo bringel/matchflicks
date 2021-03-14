@@ -1,14 +1,36 @@
+import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
+import 'react-native-gesture-handler';
+import { enableScreens } from 'react-native-screens';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { AuthenticationContextProvider, useAuthenticationContext } from './firebase/AuthenticationContext';
 import { Login } from './screens/Login/Login';
-import { tailwind } from './tailwind';
+import { Signup } from './screens/Login/Signup';
+import { getColor, tailwind } from './tailwind';
+
+enableScreens();
+
+const UnauthenticatedStack = createNativeStackNavigator();
 
 const UnauthenticatedApp = () => {
   return (
     <>
       <StatusBar barStyle="light-content" />
-      <Login />
+      <UnauthenticatedStack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <UnauthenticatedStack.Screen name="Login" component={Login} />
+        <UnauthenticatedStack.Screen
+          name="Signup"
+          component={Signup}
+          options={{
+            headerShown: true,
+            headerTitle: 'Sign Up',
+            headerStyle: { backgroundColor: getColor('grey-800') },
+            headerTintColor: getColor('indigo-500'),
+            headerTitleStyle: { color: getColor('indigo-500') }
+          }}
+        />
+      </UnauthenticatedStack.Navigator>
     </>
   );
 };
@@ -34,9 +56,11 @@ const App = () => {
 
 const WrappedApp = () => {
   return (
-    <AuthenticationContextProvider>
-      <App />
-    </AuthenticationContextProvider>
+    <NavigationContainer>
+      <AuthenticationContextProvider>
+        <App />
+      </AuthenticationContextProvider>
+    </NavigationContainer>
   );
 };
 
