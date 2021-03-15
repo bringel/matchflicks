@@ -7,6 +7,7 @@ interface Props {
   onPress: (event: GestureResponderEvent) => void;
   buttonStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  disabled?: boolean;
 }
 
 export const Button = (props: Props) => {

@@ -22,7 +22,7 @@ export const Login = (props: Props) => {
           <Button onPress={() => {}} buttonStyle={tailwind('bg-indigo-500 mt-2')} textStyle={tailwind('text-white')}>
             Login
           </Button>
-          <Text style={tailwind('mt-4 self-center text-grey-100 text-base')}>— or —</Text>
+          <Text style={tailwind('mt-4 self-center text-white text-base')}>— or —</Text>
           <Text
             style={tailwind('self-center text-indigo-500 text-lg')}
             onPress={() => {
