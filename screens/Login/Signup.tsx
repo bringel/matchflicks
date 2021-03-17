@@ -5,6 +5,7 @@ import React from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
+
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
@@ -103,6 +104,7 @@ export const Signup = (props: Props) => {
                 onBlur={handleBlur('password')}
                 value={values.password}
               />
+              <Text style={tailwind('w-full text-base mt-2')}>&nbsp;</Text>
               <Button
                 onPress={handleSubmit}
                 buttonStyle={tailwind('bg-indigo-500 mt-2')}
