@@ -1125,36 +1125,43 @@
 		"height": "100%"
 	},
 	"text-xs": {
-		"fontSize": 12,
-		"lineHeight": 16
+		"fontSize": 12
 	},
 	"text-sm": {
-		"fontSize": 14,
-		"lineHeight": 20
+		"fontSize": 14
 	},
 	"text-base": {
-		"fontSize": 16,
-		"lineHeight": 24
+		"fontSize": 16
 	},
 	"text-lg": {
-		"fontSize": 18,
-		"lineHeight": 28
+		"fontSize": 18
 	},
 	"text-xl": {
-		"fontSize": 20,
-		"lineHeight": 28
+		"fontSize": 20
 	},
 	"text-2xl": {
-		"fontSize": 24,
-		"lineHeight": 32
+		"fontSize": 24
 	},
 	"text-3xl": {
-		"fontSize": 30,
-		"lineHeight": 36
+		"fontSize": 30
 	},
 	"text-4xl": {
-		"fontSize": 36,
-		"lineHeight": 40
+		"fontSize": 36
+	},
+	"text-5xl": {
+		"fontSize": 48
+	},
+	"text-6xl": {
+		"fontSize": 60
+	},
+	"text-7xl": {
+		"fontSize": 72
+	},
+	"text-8xl": {
+		"fontSize": 96
+	},
+	"text-9xl": {
+		"fontSize": 128
 	},
 	"leading-3": {
 		"lineHeight": 12

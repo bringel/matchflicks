@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleProp, TextInput as NativeTextInput, TextInputProps, TextStyle } from 'react-native';
+import { TextInput as NativeTextInput, StyleProp, TextInputProps, TextStyle } from 'react-native';
+
 import { tailwind } from '../tailwind';
 
 interface Props extends TextInputProps {

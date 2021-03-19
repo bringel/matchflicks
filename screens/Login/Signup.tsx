@@ -12,14 +12,12 @@ import { tailwind } from '../../tailwind';
 
 interface SignupContext {
   errorCode: string | null;
-  errorMessage: string | null;
 }
 
 const machine = createMachine<SignupContext>({
   initial: 'idle',
   context: {
-    errorCode: null,
-    errorMessage: null
+    errorCode: null
   },
   states: {
     idle: {
@@ -40,8 +38,7 @@ const machine = createMachine<SignupContext>({
         onError: {
           target: 'error',
           actions: assign({
-            errorCode: (context, event) => event.data.code,
-            errorMessage: (context, event) => event.data.nativeErrorMessage
+            errorCode: (context, event) => event.data.code
           })
         }
       }
@@ -51,8 +48,7 @@ const machine = createMachine<SignupContext>({
         submit: {
           target: 'submitting',
           actions: assign<SignupContext>({
-            errorCode: '',
-            errorMessage: ''
+            errorCode: null
           })
         }
       }
@@ -69,6 +65,19 @@ const schema = yup.object({
 });
 
 type Values = yup.InferType<typeof schema>;
+
+function getErrorMessage(errorCode: string) {
+  switch (errorCode) {
+    case 'auth/weak-password':
+      return 'The password you entered is not strong enough. Please pick a stronger password.';
+    case 'auth/email-already-in-use':
+      return 'This email is already registered.\nPlease log in.';
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    default:
+      return '';
+  }
+}
 
 type Props = {};
 
@@ -104,7 +113,15 @@ export const Signup = (props: Props) => {
                 onBlur={handleBlur('password')}
                 value={values.password}
               />
-              <Text style={tailwind('w-full text-base mt-2')}>&nbsp;</Text>
+              {state.context.errorCode === null ? (
+                <View style={{ height: 40 }} />
+              ) : (
+                <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
+                  <Text style={tailwind('text-orange-800 text-base font-semibold')}>
+                    {getErrorMessage(state.context.errorCode)}
+                  </Text>
+                </View>
+              )}
               <Button
                 onPress={handleSubmit}
                 buttonStyle={tailwind('bg-indigo-500 mt-2')}
