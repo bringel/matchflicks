@@ -64,8 +64,6 @@ const schema = yup.object({
   password: yup.string().required()
 });
 
-type Values = yup.InferType<typeof schema>;
-
 function getErrorMessage(errorCode: string) {
   switch (errorCode) {
     case 'auth/weak-password':
@@ -84,14 +82,15 @@ type Props = {};
 export const Signup = (props: Props) => {
   const [state, send] = useMachine(machine);
 
-  const handleSubmitButton = (values: Values) => {
-    send({ type: 'submit', payload: values });
-  };
-
   return (
     <SafeAreaView style={tailwind('flex-1 bg-grey-800')}>
       <View style={tailwind('mt-6 mx-10')}>
-        <Formik initialValues={{ email: '', password: '' }} validationSchema={schema} onSubmit={handleSubmitButton}>
+        <Formik
+          initialValues={{ email: '', password: '' }}
+          validationSchema={schema}
+          onSubmit={values => {
+            send({ type: 'submit', payload: values });
+          }}>
           {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
             <>
               <Text style={tailwind('text-grey-100 text-base')}>Email</Text>
