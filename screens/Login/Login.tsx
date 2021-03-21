@@ -1,4 +1,5 @@
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
 import React from 'react';
@@ -25,6 +26,9 @@ const machine = createMachine<LoginContext>({
       on: {
         submit: {
           target: 'submitting'
+        },
+        loginWithGoogle: {
+          target: 'loggingInWithGoogle'
         }
       }
     },
@@ -44,6 +48,29 @@ const machine = createMachine<LoginContext>({
         }
       }
     },
+    loggingInWithGoogle: {
+      invoke: {
+        src: (context, event) => {
+          return GoogleSignin.signIn().then(user => {
+            const cred = auth.GoogleAuthProvider.credential(user.idToken);
+            return auth().signInWithCredential(cred);
+          });
+        },
+        onDone: {
+          target: 'loggedIn'
+        },
+        onError: [
+          {
+            target: 'idle',
+            cond: (context, event) => event.data.code === statusCodes.SIGN_IN_CANCELLED
+          },
+          {
+            target: 'playServicesMissing',
+            cond: (context, event) => event.data.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
+          }
+        ]
+      }
+    },
     error: {
       on: {
         submit: {
@@ -51,7 +78,15 @@ const machine = createMachine<LoginContext>({
           actions: assign<LoginContext>({
             errorCode: null
           })
+        },
+        loginWithGoogle: {
+          target: 'loggingInWithGoogle'
         }
+      }
+    },
+    playServicesMissing: {
+      entry: () => {
+        GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       }
     },
     loggedIn: {
@@ -135,6 +170,13 @@ export const Login = (props: Props) => {
                   disabled={!isValid || state.matches('submitting')}>
                   Login
                 </Button>
+                <GoogleSigninButton
+                  size={GoogleSigninButton.Size.Wide}
+                  style={tailwind('w-full mt-2')}
+                  onPress={() => {
+                    send('loginWithGoogle');
+                  }}
+                />
               </>
             )}
           </Formik>

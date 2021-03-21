@@ -1,17 +1,23 @@
+import 'react-native-gesture-handler';
+
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
-import 'react-native-gesture-handler';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+
 import { AuthenticationContextProvider, useAuthenticationContext } from './firebase/AuthenticationContext';
 import { Login } from './screens/Login/Login';
-import { Signup } from './screens/Login/Signup';
+import { Signup } from './screens/Signup/Signup';
 import { getColor, tailwind } from './tailwind';
 
 enableScreens();
 
 const UnauthenticatedStack = createNativeStackNavigator();
+GoogleSignin.configure({
+  webClientId: '479366644790-a4463vom1bpe4onn6kq6qop4avofruc8.apps.googleusercontent.com'
+});
 
 const UnauthenticatedApp = () => {
   return (
