@@ -1,9 +1,10 @@
+import { AppleButton, appleAuth } from '@invertase/react-native-apple-authentication';
 import auth from '@react-native-firebase/auth';
-import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
 import React from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { Image, SafeAreaView, Text, View } from 'react-native';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack';
 import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
@@ -29,6 +30,9 @@ const machine = createMachine<LoginContext>({
         },
         loginWithGoogle: {
           target: 'loggingInWithGoogle'
+        },
+        loginWithApple: {
+          target: 'loggingInWithApple'
         }
       }
     },
@@ -71,6 +75,33 @@ const machine = createMachine<LoginContext>({
         ]
       }
     },
+    loggingInWithApple: {
+      invoke: {
+        src: (context, event) => {
+          return appleAuth
+            .performRequest({
+              requestedOperation: appleAuth.Operation.LOGIN,
+              requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+            })
+            .then(response => {
+              if (response.identityToken === null) {
+                throw new Error('Apple Sign-In failed - no identity token returned');
+              }
+
+              const { identityToken, nonce } = response;
+              const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+
+              return auth().signInWithCredential(appleCredential);
+            });
+        },
+        onDone: {
+          target: 'loggedIn'
+        },
+        onError: {
+          target: 'error'
+        }
+      }
+    },
     error: {
       on: {
         submit: {
@@ -81,6 +112,9 @@ const machine = createMachine<LoginContext>({
         },
         loginWithGoogle: {
           target: 'loggingInWithGoogle'
+        },
+        loginWithApple: {
+          target: 'loggingInWithApple'
         }
       }
     },
@@ -165,18 +199,33 @@ export const Login = (props: Props) => {
                 )}
                 <Button
                   onPress={handleSubmit}
-                  buttonStyle={tailwind('bg-indigo-500 mt-2')}
+                  buttonStyle={[tailwind('bg-indigo-500 mt-2')]}
                   textStyle={tailwind('text-white')}
                   disabled={!isValid || state.matches('submitting')}>
                   Login
                 </Button>
-                <GoogleSigninButton
-                  size={GoogleSigninButton.Size.Wide}
-                  style={tailwind('w-full mt-2')}
+                {appleAuth.isSupported ? (
+                  <AppleButton
+                    buttonStyle={AppleButton.Style.WHITE}
+                    buttonType={AppleButton.Type.SIGN_IN}
+                    style={[tailwind('w-full mt-2'), { height: 36 }]}
+                    cornerRadius={4}
+                    onPress={() => {
+                      send('loginWithApple');
+                    }}
+                  />
+                ) : null}
+                <Button
                   onPress={() => {
                     send('loginWithGoogle');
                   }}
-                />
+                  buttonStyle={tailwind('mt-2 bg-white w-full flex flex-row')}>
+                  <Image
+                    source={require('../../images/g-logo.png')}
+                    style={[tailwind('mr-2'), { height: 20, width: 20 }]}
+                  />
+                  <Text style={tailwind('font-semibold')}>Sign in with Google</Text>
+                </Button>
               </>
             )}
           </Formik>

@@ -57,6 +57,7 @@
 		2D02E47B1E0B4A5D006451C7 /* Matchflicks-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Matchflicks-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Matchflicks-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Matchflicks-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F0BE1E125DF58B200FC487A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2F5C396F2607C2A600BDB3C8 /* Matchflicks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Matchflicks.entitlements; path = Matchflicks/Matchflicks.entitlements; sourceTree = "<group>"; };
 		31ED41A42793C9A9EF795921 /* libPods-Matchflicks.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Matchflicks.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		32762A915CFBF18F9DDF59A3 /* libPods-Matchflicks-MatchflicksTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Matchflicks-MatchflicksTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A33598F61C48E820D430933 /* Pods-Matchflicks-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Matchflicks-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Matchflicks-tvOS/Pods-Matchflicks-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -127,6 +128,7 @@
 		13B07FAE1A68108700A75B9A /* Matchflicks */ = {
 			isa = PBXGroup;
 			children = (
+				2F5C396F2607C2A600BDB3C8 /* Matchflicks.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -297,6 +299,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = HK7854N4SL;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -677,7 +680,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Matchflicks/Matchflicks.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HK7854N4SL;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Matchflicks/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -686,7 +691,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bringel.Matchflicks;
 				PRODUCT_NAME = Matchflicks;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -700,7 +705,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Matchflicks/Matchflicks.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HK7854N4SL;
 				INFOPLIST_FILE = Matchflicks/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -708,7 +715,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bringel.Matchflicks;
 				PRODUCT_NAME = Matchflicks;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
