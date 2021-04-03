@@ -1,10 +1,18 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useMemo, useReducer } from 'react';
+
+import { MovieGenre, WatchProvider } from '../types/theMovieDB';
+import { useFirestoreDocument } from './useFirestoreDocument';
+
+export interface UserSettings {
+  favoriteGenres: Array<MovieGenre>;
+  watchProviders: Array<WatchProvider>;
+}
 
 interface AuthenticationContextValue {
   initializing: boolean;
-
   user: FirebaseAuthTypes.User | null;
+  userSettings: UserSettings | null;
 }
 
 export const AuthenticationContext = React.createContext<AuthenticationContextValue | null>(null);
@@ -30,7 +38,12 @@ type LoggedOutAction = {
 
 type Actions = LoggedInAction | LoggedOutAction;
 
-function reducer(state: AuthenticationContextValue, action: Actions): AuthenticationContextValue {
+type State = {
+  initializing: boolean;
+  user: FirebaseAuthTypes.User | null;
+};
+
+function reducer(state: State, action: Actions): State {
   switch (action.type) {
     case 'loggedIn': {
       return {
@@ -59,6 +72,8 @@ export const AuthenticationContextProvider = (props: Props) => {
     user: null
   });
 
+  const [userSettingsData] = useFirestoreDocument<UserSettings>('users', state.user?.uid);
+
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
       if (user !== null) {
@@ -71,5 +86,14 @@ export const AuthenticationContextProvider = (props: Props) => {
     return unsubscribe;
   }, []);
 
-  return <AuthenticationContext.Provider value={state}>{props.children}</AuthenticationContext.Provider>;
+  const value = useMemo(
+    () => ({
+      initializing: state.initializing,
+      user: state.user,
+      userSettings: userSettingsData
+    }),
+    [state, userSettingsData]
+  );
+
+  return <AuthenticationContext.Provider value={value}>{props.children}</AuthenticationContext.Provider>;
 };

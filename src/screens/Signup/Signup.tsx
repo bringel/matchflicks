@@ -1,12 +1,13 @@
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
 import React from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
+import { Container } from '../../components/Container';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
 
@@ -83,7 +84,7 @@ export const Signup = (props: Props) => {
   const [state, send] = useMachine(machine);
 
   return (
-    <SafeAreaView style={tailwind('flex-1 bg-grey-800')}>
+    <Container>
       <View style={tailwind('mt-6 mx-10')}>
         <Formik
           initialValues={{ email: '', password: '' }}
@@ -132,6 +133,6 @@ export const Signup = (props: Props) => {
           )}
         </Formik>
       </View>
-    </SafeAreaView>
+    </Container>
   );
 };

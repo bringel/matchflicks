@@ -4,12 +4,13 @@ import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-si
 import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
 import React from 'react';
-import { Image, SafeAreaView, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack';
 import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
+import { Container } from '../../components/Container';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
 
@@ -157,7 +158,7 @@ export const Login = (props: Props) => {
   const [state, send] = useMachine(machine);
 
   return (
-    <SafeAreaView style={tailwind('flex-1 bg-grey-800')}>
+    <Container>
       <View style={tailwind('flex flex-col mt-10')}>
         <Text style={tailwind('text-indigo-500 text-3xl self-center')}>Matchflicks</Text>
         <View style={tailwind('mt-6 mx-10')}>
@@ -239,6 +240,6 @@ export const Login = (props: Props) => {
           </Text>
         </View>
       </View>
-    </SafeAreaView>
+    </Container>
   );
 };
