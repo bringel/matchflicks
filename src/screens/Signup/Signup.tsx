@@ -94,8 +94,8 @@ export const Signup = (props: Props) => {
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
             <>
-              <Text style={tailwind('text-grey-100 text-base')}>Email</Text>
               <TextInput
+                label="Email"
                 textContentType="emailAddress"
                 keyboardType="email-address"
                 style={tailwind('w-full')}
@@ -104,8 +104,8 @@ export const Signup = (props: Props) => {
                 value={values.email}
                 autoCapitalize={'none'}
               />
-              <Text style={tailwind('text-grey-100 text-base')}>Password</Text>
               <TextInput
+                label="Password"
                 textContentType="password"
                 secureTextEntry
                 style={tailwind('w-full')}

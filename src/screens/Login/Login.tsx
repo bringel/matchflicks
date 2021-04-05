@@ -165,13 +165,14 @@ export const Login = (props: Props) => {
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={schema}
+            isInitialValid={false}
             onSubmit={values => {
               send({ type: 'submit', payload: values });
             }}>
             {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
               <>
-                <Text style={tailwind('text-grey-100 text-base')}>Email</Text>
                 <TextInput
+                  label="Email"
                   textContentType="username"
                   keyboardType="email-address"
                   style={tailwind('w-full')}
@@ -180,8 +181,9 @@ export const Login = (props: Props) => {
                   value={values.email}
                   autoCapitalize={'none'}
                 />
-                <Text style={tailwind('text-grey-100 text-base')}>Password</Text>
+
                 <TextInput
+                  label="Password"
                   textContentType="password"
                   secureTextEntry
                   style={tailwind('w-full')}
@@ -209,8 +211,8 @@ export const Login = (props: Props) => {
                   <AppleButton
                     buttonStyle={AppleButton.Style.WHITE}
                     buttonType={AppleButton.Type.SIGN_IN}
-                    style={[tailwind('w-full mt-2'), { height: 36 }]}
-                    cornerRadius={4}
+                    style={[tailwind('w-full mt-2'), { height: 48 }]}
+                    cornerRadius={2}
                     onPress={() => {
                       send('loginWithApple');
                     }}
