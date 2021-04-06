@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 import { tailwind } from '../tailwind';
 
 type Props = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 export const Container = (props: Props) => {

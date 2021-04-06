@@ -165,7 +165,7 @@ export const Login = (props: Props) => {
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={schema}
-            isInitialValid={false}
+            validateOnMount
             onSubmit={values => {
               send({ type: 'submit', payload: values });
             }}>
