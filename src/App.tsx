@@ -3,8 +3,9 @@ import 'react-native-gesture-handler';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { View } from 'react-native';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
@@ -57,12 +58,18 @@ const UnauthenticatedApp = () => {
 const RootStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 
-const MainTabs = () => {
-  return (
-    <Tabs.Navigator>
-      <Tabs.Screen name="User" component={UserTab} />
-    </Tabs.Navigator>
-  );
+const MainTabs = (props: { navigation: StackNavigationProp<any, 'Main'> }) => {
+  // const authContext = useAuthenticationContext();
+  // if (authContext.userSettings === null) {
+  //   props.navigation.push('Onboarding');
+  // }
+
+  // return (
+  //   <Tabs.Navigator>
+  //     <Tabs.Screen name="User" component={View} />
+  //   </Tabs.Navigator>
+  // );
+  return <View />;
 };
 
 const AuthenticatedApp = () => {
@@ -71,7 +78,11 @@ const AuthenticatedApp = () => {
       <StatusBar barStyle="light-content" />
       <RootStack.Navigator mode="modal">
         <RootStack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-        <RootStack.Screen name="Onboarding" component={OnboardingModal} />
+        <RootStack.Screen
+          name="Onboarding"
+          component={OnboardingModal}
+          options={{ headerLeft: () => null, title: '' }}
+        />
       </RootStack.Navigator>
     </>
   );

@@ -33,7 +33,7 @@ function reducer(state: State, action: Actions): State {
 export function useFirestoreDocument<TDoc>(
   collectionName: string,
   documentID: null | undefined | string,
-  oneTimeSnapshot: boolean = false
+  listenForChanges: boolean = false
 ): [TDoc | null, FirebaseFirestoreTypes.DocumentReference | null, boolean] {
   const [state, dispatch] = useReducer(reducer, {
     documentReference: null,
@@ -45,13 +45,7 @@ export function useFirestoreDocument<TDoc>(
     if (!!collectionName && !!documentID) {
       const docRef = firestore().collection(collectionName).doc(documentID);
 
-      if (oneTimeSnapshot) {
-        docRef.get().then(snapshot => {
-          const data = snapshot.data();
-
-          dispatch({ type: 'dataLoaded', docRef: docRef, data: data });
-        });
-      } else {
+      if (listenForChanges) {
         const unsubscribe = docRef.onSnapshot(snapshot => {
           const data = snapshot.data();
 
@@ -59,9 +53,15 @@ export function useFirestoreDocument<TDoc>(
         });
 
         return unsubscribe;
+      } else {
+        docRef.get().then(snapshot => {
+          const data = snapshot.data();
+
+          dispatch({ type: 'dataLoaded', docRef: docRef, data: data });
+        });
       }
     }
-  }, [collectionName, documentID, oneTimeSnapshot]);
+  }, [collectionName, documentID, listenForChanges]);
 
   return [state.data as TDoc, state.documentReference, state.initialLoadComplete];
 }
