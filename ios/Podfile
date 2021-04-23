@@ -6,7 +6,7 @@ platform :ios, '10.0'
 target 'Matchflicks' do
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(:path => config["reactNativePath"], :hermes_enabled => true)
 
   target 'MatchflicksTests' do
     inherit! :complete
@@ -17,7 +17,7 @@ target 'Matchflicks' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  #use_flipper!
+  use_flipper!
   post_install do |installer|
     installer.pods_project.targets.each do |t|
       t.build_configurations.each do |bc|
@@ -26,7 +26,7 @@ target 'Matchflicks' do
         end
       end
     end
-    #flipper_post_install(installer)
+    flipper_post_install(installer)
   end
 end
 
