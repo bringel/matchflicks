@@ -1,9 +1,8 @@
 import React from 'react';
-
-import { Container } from '../../components/Container';
+import { View } from 'react-native';
 
 type Props = {};
 
 export const UserTab = (props: Props) => {
-  return <Container />;
+  return <View />;
 };

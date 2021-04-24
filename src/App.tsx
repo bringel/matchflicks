@@ -4,17 +4,17 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
-import { View } from 'react-native';
-import { SafeAreaView, StatusBar } from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { StatusBar } from 'react-native';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
+import { Container } from './components/Container';
 import { AuthenticationContextProvider, useAuthenticationContext } from './firebase/AuthenticationContext';
 import { Login } from './screens/Login/Login';
 import { OnboardingModal } from './screens/Onboarding/OnboardingModal';
 import { Signup } from './screens/Signup/Signup';
 import { UserTab } from './screens/UserTab/UserTab';
-import { getColor, tailwind } from './tailwind';
+import { getColor } from './tailwind';
 
 GoogleSignin.configure({
   webClientId: '479366644790-a4463vom1bpe4onn6kq6qop4avofruc8.apps.googleusercontent.com'
@@ -35,20 +35,17 @@ const navigationTheme = {
 const UnauthenticatedStack = createNativeStackNavigator();
 const UnauthenticatedApp = () => {
   return (
-    <>
-      <StatusBar barStyle="light-content" />
-      <UnauthenticatedStack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <UnauthenticatedStack.Screen name="Login" component={Login} />
-        <UnauthenticatedStack.Screen
-          name="Signup"
-          component={Signup}
-          options={{
-            headerShown: true,
-            headerTitle: 'Sign Up'
-          }}
-        />
-      </UnauthenticatedStack.Navigator>
-    </>
+    <UnauthenticatedStack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <UnauthenticatedStack.Screen name="Login" component={Login} />
+      <UnauthenticatedStack.Screen
+        name="Signup"
+        component={Signup}
+        options={{
+          headerShown: true,
+          headerTitle: 'Sign Up'
+        }}
+      />
+    </UnauthenticatedStack.Navigator>
   );
 };
 
@@ -56,47 +53,37 @@ const RootStack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
 
 const MainTabs = (props: { navigation: StackNavigationProp<any, 'Main'> }) => {
-  // const authContext = useAuthenticationContext();
-  // if (authContext.userSettings === null) {
-  //   props.navigation.push('Onboarding');
-  // }
+  const authContext = useAuthenticationContext();
+  useLayoutEffect(() => {
+    if (authContext.userSettings === null) {
+      props.navigation.push('Onboarding');
+    }
+  }, [authContext, props.navigation]);
 
-  // return (
-  //   <Tabs.Navigator>
-  //     <Tabs.Screen name="User" component={View} />
-  //   </Tabs.Navigator>
-  // );
-  return <View />;
+  return (
+    <Tabs.Navigator>
+      <Tabs.Screen name="User" component={UserTab} />
+    </Tabs.Navigator>
+  );
 };
 
 const AuthenticatedApp = () => {
   return (
-    <>
-      <StatusBar barStyle="light-content" />
-      <RootStack.Navigator mode="modal">
-        <RootStack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-        <RootStack.Screen
-          name="Onboarding"
-          component={OnboardingModal}
-          options={{ headerLeft: () => null, title: '' }}
-        />
-      </RootStack.Navigator>
-    </>
+    <RootStack.Navigator mode="modal" screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="Main" component={MainTabs} />
+      <RootStack.Screen name="Onboarding" component={OnboardingModal} />
+    </RootStack.Navigator>
   );
 };
 
 const App = () => {
   const authContext = useAuthenticationContext();
 
-  return authContext.initializing ? (
-    <>
+  return (
+    <Container>
       <StatusBar barStyle="light-content" />
-      <SafeAreaView style={tailwind('flex-1 bg-grey-800')} />
-    </>
-  ) : authContext.user === null ? (
-    <UnauthenticatedApp />
-  ) : (
-    <AuthenticatedApp />
+      {authContext.initializing ? null : authContext.user === null ? <UnauthenticatedApp /> : <AuthenticatedApp />}
+    </Container>
   );
 };
 

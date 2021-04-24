@@ -10,7 +10,6 @@ import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
-import { Container } from '../../components/Container';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
 
@@ -158,90 +157,84 @@ export const Login = (props: Props) => {
   const [state, send] = useMachine(machine);
 
   return (
-    <Container>
-      <View style={tailwind('flex flex-col mt-10')}>
-        <Text style={tailwind('text-indigo-500 text-3xl self-center')}>Matchflicks</Text>
-        <View style={tailwind('mt-6 mx-10')}>
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={schema}
-            validateOnMount
-            onSubmit={values => {
-              send({ type: 'submit', payload: values });
-            }}>
-            {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
-              <>
-                <TextInput
-                  label="Email"
-                  textContentType="username"
-                  keyboardType="email-address"
-                  style={tailwind('w-full')}
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  autoCapitalize={'none'}
-                />
+    <View style={tailwind('flex flex-col mt-10')}>
+      <Text style={tailwind('text-indigo-500 text-3xl self-center')}>Matchflicks</Text>
+      <View style={tailwind('mt-6 mx-10')}>
+        <Formik
+          initialValues={{ email: '', password: '' }}
+          validationSchema={schema}
+          validateOnMount
+          onSubmit={values => {
+            send({ type: 'submit', payload: values });
+          }}>
+          {({ handleSubmit, isValid }) => (
+            <>
+              <TextInput
+                name="email"
+                label="Email"
+                textContentType="username"
+                keyboardType="email-address"
+                style={tailwind('w-full')}
+                autoCapitalize={'none'}
+              />
 
-                <TextInput
-                  label="Password"
-                  textContentType="password"
-                  secureTextEntry
-                  style={tailwind('w-full')}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                />
-                {state.context.errorCode === null ? (
-                  <View style={{ height: 40 }} />
-                ) : (
-                  <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
-                    <Text style={tailwind('text-orange-800 text-base font-semibold')}>
-                      {getErrorMessage(state.context.errorCode)}
-                    </Text>
-                  </View>
-                )}
-                <Button
-                  onPress={handleSubmit}
-                  buttonStyle={[tailwind('bg-indigo-500 mt-2')]}
-                  textStyle={tailwind('text-white')}
-                  disabled={!isValid || state.matches('submitting')}>
-                  Login
-                </Button>
-                {appleAuth.isSupported ? (
-                  <AppleButton
-                    buttonStyle={AppleButton.Style.WHITE}
-                    buttonType={AppleButton.Type.SIGN_IN}
-                    style={[tailwind('w-full mt-2'), { height: 48 }]}
-                    cornerRadius={2}
-                    onPress={() => {
-                      send('loginWithApple');
-                    }}
-                  />
-                ) : null}
-                <Button
+              <TextInput
+                name="password"
+                label="Password"
+                textContentType="password"
+                secureTextEntry
+                style={tailwind('w-full')}
+              />
+              {state.context.errorCode === null ? (
+                <View style={{ height: 40 }} />
+              ) : (
+                <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
+                  <Text style={tailwind('text-orange-800 text-base font-semibold')}>
+                    {getErrorMessage(state.context.errorCode)}
+                  </Text>
+                </View>
+              )}
+              <Button
+                onPress={handleSubmit}
+                buttonStyle={[tailwind('bg-indigo-500 mt-2')]}
+                textStyle={tailwind('text-grey-100')}
+                disabled={!isValid || state.matches('submitting')}>
+                Login
+              </Button>
+              {appleAuth.isSupported ? (
+                <AppleButton
+                  buttonStyle={AppleButton.Style.WHITE}
+                  buttonType={AppleButton.Type.SIGN_IN}
+                  style={[tailwind('w-full mt-2'), { height: 48 }]}
+                  cornerRadius={2}
                   onPress={() => {
-                    send('loginWithGoogle');
+                    send('loginWithApple');
                   }}
-                  buttonStyle={tailwind('mt-2 bg-white w-full flex flex-row')}>
-                  <Image
-                    source={require('../../images/g-logo.png')}
-                    style={[tailwind('mr-2'), { height: 20, width: 20 }]}
-                  />
-                  <Text style={tailwind('font-semibold')}>Sign in with Google</Text>
-                </Button>
-              </>
-            )}
-          </Formik>
-          <Text style={tailwind('mt-4 self-center text-white text-base')}>— or —</Text>
-          <Text
-            style={tailwind('self-center text-indigo-500 text-lg')}
-            onPress={() => {
-              props.navigation.push('Signup', {});
-            }}>
-            Signup
-          </Text>
-        </View>
+                />
+              ) : null}
+              <Button
+                onPress={() => {
+                  send('loginWithGoogle');
+                }}
+                buttonStyle={tailwind('mt-2 bg-white w-full flex flex-row')}>
+                <Image
+                  source={require('../../images/g-logo.png')}
+                  style={[tailwind('mr-2'), { height: 20, width: 20 }]}
+                />
+                <Text style={tailwind('font-semibold')}>Sign in with Google</Text>
+              </Button>
+            </>
+          )}
+        </Formik>
+        <Text style={tailwind('mt-4 self-center text-grey-100 text-base')}>— or —</Text>
+        <Text
+          style={tailwind('self-center text-indigo-500 text-lg')}
+          onPress={() => {
+            props.navigation.push('Signup', {});
+          }}>
+          Signup
+        </Text>
       </View>
-    </Container>
+    </View>
   );
 };

@@ -7,7 +7,6 @@ import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
-import { Container } from '../../components/Container';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
 
@@ -84,55 +83,49 @@ export const Signup = (props: Props) => {
   const [state, send] = useMachine(machine);
 
   return (
-    <Container>
-      <View style={tailwind('mt-6 mx-10')}>
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          validationSchema={schema}
-          onSubmit={values => {
-            send({ type: 'submit', payload: values });
-          }}>
-          {({ handleChange, handleBlur, handleSubmit, values, isValid }) => (
-            <>
-              <TextInput
-                label="Email"
-                textContentType="emailAddress"
-                keyboardType="email-address"
-                style={tailwind('w-full')}
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                autoCapitalize={'none'}
-              />
-              <TextInput
-                label="Password"
-                textContentType="password"
-                secureTextEntry
-                style={tailwind('w-full')}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
-              {state.context.errorCode === null ? (
-                <View style={{ height: 40 }} />
-              ) : (
-                <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
-                  <Text style={tailwind('text-orange-800 text-base font-semibold')}>
-                    {getErrorMessage(state.context.errorCode)}
-                  </Text>
-                </View>
-              )}
-              <Button
-                onPress={handleSubmit}
-                buttonStyle={tailwind('bg-indigo-500 mt-2')}
-                textStyle={tailwind('text-white')}
-                disabled={!isValid || state.matches('submitting')}>
-                Sign Up
-              </Button>
-            </>
-          )}
-        </Formik>
-      </View>
-    </Container>
+    <View style={tailwind('mt-6 mx-10')}>
+      <Formik
+        initialValues={{ email: '', password: '' }}
+        validationSchema={schema}
+        onSubmit={values => {
+          send({ type: 'submit', payload: values });
+        }}>
+        {({ handleSubmit, isValid }) => (
+          <>
+            <TextInput
+              name="email"
+              label="Email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              style={tailwind('w-full')}
+              autoCapitalize={'none'}
+            />
+            <TextInput
+              name="password"
+              label="Password"
+              textContentType="password"
+              secureTextEntry
+              style={tailwind('w-full')}
+            />
+            {state.context.errorCode === null ? (
+              <View style={{ height: 40 }} />
+            ) : (
+              <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
+                <Text style={tailwind('text-orange-800 text-base font-semibold')}>
+                  {getErrorMessage(state.context.errorCode)}
+                </Text>
+              </View>
+            )}
+            <Button
+              onPress={handleSubmit}
+              buttonStyle={tailwind('bg-indigo-500 mt-2')}
+              textStyle={tailwind('text-grey-100')}
+              disabled={!isValid || state.matches('submitting')}>
+              Sign Up
+            </Button>
+          </>
+        )}
+      </Formik>
+    </View>
   );
 };
