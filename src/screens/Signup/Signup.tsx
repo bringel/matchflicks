@@ -1,63 +1,12 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useReducer } from 'react';
 import { Text, View } from 'react-native';
-import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
-
-interface SignupContext {
-  errorCode: string | null;
-}
-
-const machine = createMachine<SignupContext>({
-  initial: 'idle',
-  context: {
-    errorCode: null
-  },
-  states: {
-    idle: {
-      on: {
-        submit: {
-          target: 'submitting'
-        }
-      }
-    },
-    submitting: {
-      invoke: {
-        src: (context, event) => {
-          return auth().createUserWithEmailAndPassword(event.payload.email, event.payload.password);
-        },
-        onDone: {
-          target: 'created'
-        },
-        onError: {
-          target: 'error',
-          actions: assign({
-            errorCode: (context, event) => event.data.code
-          })
-        }
-      }
-    },
-    error: {
-      on: {
-        submit: {
-          target: 'submitting',
-          actions: assign<SignupContext>({
-            errorCode: null
-          })
-        }
-      }
-    },
-    created: {
-      type: 'final'
-    }
-  }
-});
 
 const schema = yup.object({
   email: yup.string().required().email(),
@@ -79,17 +28,59 @@ function getErrorMessage(errorCode: string) {
 
 type Props = {};
 
+type State = {
+  value: 'idle' | 'submitting' | 'error';
+  errorCode: string | null;
+};
+
+type Actions = { type: 'startSubmitting' } | { type: 'finishSubmitting' } | { type: 'signupError'; errorCode: string };
+
+function reducer(state: State, action: Actions): State {
+  switch (action.type) {
+    case 'startSubmitting': {
+      return {
+        ...state,
+        value: 'submitting'
+      };
+    }
+    case 'finishSubmitting': {
+      return {
+        ...state,
+        value: 'idle'
+      };
+    }
+    case 'signupError': {
+      return {
+        value: 'error',
+        errorCode: action.errorCode
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export const Signup = (props: Props) => {
-  const [state, send] = useMachine(machine);
+  const [state, dispatch] = useReducer(reducer, {
+    value: 'idle',
+    errorCode: null
+  });
+
+  const submit = (values: yup.TypeOf<typeof schema>) => {
+    dispatch({ type: 'startSubmitting' });
+    return auth()
+      .createUserWithEmailAndPassword(values.email, values.password)
+      .then(() => {
+        dispatch({ type: 'finishSubmitting' });
+      })
+      .catch(error => {
+        dispatch({ type: 'signupError', errorCode: error.code });
+      });
+  };
 
   return (
     <View style={tailwind('mt-6 mx-10')}>
-      <Formik
-        initialValues={{ email: '', password: '' }}
-        validationSchema={schema}
-        onSubmit={values => {
-          send({ type: 'submit', payload: values });
-        }}>
+      <Formik initialValues={{ email: '', password: '' }} validationSchema={schema} onSubmit={submit}>
         {({ handleSubmit, isValid }) => (
           <>
             <TextInput
@@ -107,12 +98,12 @@ export const Signup = (props: Props) => {
               secureTextEntry
               style={tailwind('w-full')}
             />
-            {state.context.errorCode === null ? (
+            {state.errorCode === null ? (
               <View style={{ height: 40 }} />
             ) : (
               <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
                 <Text style={tailwind('text-orange-800 text-base font-semibold')}>
-                  {getErrorMessage(state.context.errorCode)}
+                  {getErrorMessage(state.errorCode)}
                 </Text>
               </View>
             )}
@@ -120,7 +111,7 @@ export const Signup = (props: Props) => {
               onPress={handleSubmit}
               buttonStyle={tailwind('bg-indigo-500 mt-2')}
               textStyle={tailwind('text-grey-100')}
-              disabled={!isValid || state.matches('submitting')}>
+              disabled={!isValid || state.value === 'submitting'}>
               Sign Up
             </Button>
           </>

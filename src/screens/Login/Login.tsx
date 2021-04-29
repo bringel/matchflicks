@@ -1,138 +1,25 @@
 import { AppleButton, appleAuth } from '@invertase/react-native-apple-authentication';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { useMachine } from '@xstate/react';
 import { Formik } from 'formik';
-import React from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { Image, Text, View } from 'react-native';
 import { NativeStackNavigationProp } from 'react-native-screens/lib/typescript/native-stack';
-import { assign, createMachine } from 'xstate';
 import * as yup from 'yup';
 
 import { Button } from '../../components/Button';
 import { TextInput } from '../../components/TextInput';
 import { tailwind } from '../../tailwind';
 
-interface LoginContext {
-  errorCode: string | null;
-}
-
-const machine = createMachine<LoginContext>({
-  initial: 'idle',
-  context: {
-    errorCode: null
-  },
-  states: {
-    idle: {
-      on: {
-        submit: {
-          target: 'submitting'
-        },
-        loginWithGoogle: {
-          target: 'loggingInWithGoogle'
-        },
-        loginWithApple: {
-          target: 'loggingInWithApple'
-        }
-      }
-    },
-    submitting: {
-      invoke: {
-        src: (context, event) => {
-          return auth().signInWithEmailAndPassword(event.payload.email, event.payload.password);
-        },
-        onDone: {
-          target: 'loggedIn'
-        },
-        onError: {
-          target: 'error',
-          actions: assign({
-            errorCode: (context, event) => event.data.code
-          })
-        }
-      }
-    },
-    loggingInWithGoogle: {
-      invoke: {
-        src: (context, event) => {
-          return GoogleSignin.signIn().then(user => {
-            const cred = auth.GoogleAuthProvider.credential(user.idToken);
-            return auth().signInWithCredential(cred);
-          });
-        },
-        onDone: {
-          target: 'loggedIn'
-        },
-        onError: [
-          {
-            target: 'idle',
-            cond: (context, event) => event.data.code === statusCodes.SIGN_IN_CANCELLED
-          },
-          {
-            target: 'playServicesMissing',
-            cond: (context, event) => event.data.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE
-          }
-        ]
-      }
-    },
-    loggingInWithApple: {
-      invoke: {
-        src: (context, event) => {
-          return appleAuth
-            .performRequest({
-              requestedOperation: appleAuth.Operation.LOGIN,
-              requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
-            })
-            .then(response => {
-              if (response.identityToken === null) {
-                throw new Error('Apple Sign-In failed - no identity token returned');
-              }
-
-              const { identityToken, nonce } = response;
-              const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
-
-              return auth().signInWithCredential(appleCredential);
-            });
-        },
-        onDone: {
-          target: 'loggedIn'
-        },
-        onError: {
-          target: 'error'
-        }
-      }
-    },
-    error: {
-      on: {
-        submit: {
-          target: 'submitting',
-          actions: assign<LoginContext>({
-            errorCode: null
-          })
-        },
-        loginWithGoogle: {
-          target: 'loggingInWithGoogle'
-        },
-        loginWithApple: {
-          target: 'loggingInWithApple'
-        }
-      }
-    },
-    playServicesMissing: {
-      entry: () => {
-        GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      }
-    },
-    loggedIn: {
-      type: 'final'
-    }
-  }
-});
-
 const schema = yup.object({
   email: yup.string().required().email(),
   password: yup.string().required()
 });
+
+interface State {
+  value: 'idle' | 'submitting' | 'error' | 'playServicesMissing';
+  errorCode: null | string;
+}
 
 function getErrorMessage(errorCode: string) {
   switch (errorCode) {
@@ -153,8 +40,108 @@ type Props = {
   navigation: NativeStackNavigationProp<any, 'Login'>;
 };
 
+type Actions =
+  | { type: 'startSubmit' }
+  | { type: 'finishSubmit' }
+  | { type: 'loginError'; errorCode: string | null }
+  | { type: 'playServicesMissingError' }
+  | { type: 'loginCancelled' };
+
+function reducer(state: State, action: Actions): State {
+  switch (action.type) {
+    case 'startSubmit': {
+      return {
+        ...state,
+        value: 'submitting'
+      };
+    }
+    case 'finishSubmit': {
+      return {
+        ...state,
+        value: 'idle'
+      };
+    }
+    case 'loginError': {
+      return {
+        value: 'error',
+        errorCode: action.errorCode
+      };
+    }
+    case 'playServicesMissingError': {
+      return {
+        ...state,
+        value: 'playServicesMissing'
+      };
+    }
+    case 'loginCancelled': {
+      return {
+        ...state,
+        value: 'idle'
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export const Login = (props: Props) => {
-  const [state, send] = useMachine(machine);
+  const [state, dispatch] = useReducer(reducer, {
+    value: 'idle',
+    errorCode: null
+  });
+
+  const logInWithEmail = (values: yup.TypeOf<typeof schema>) => {
+    dispatch({ type: 'startSubmit' });
+    return auth()
+      .signInWithEmailAndPassword(values.email, values.password)
+      .then(() => {
+        dispatch({ type: 'finishSubmit' });
+      })
+      .catch(error => {
+        dispatch({ type: 'loginError', errorCode: error.code });
+      });
+  };
+
+  const logInWithApple = () => {
+    return appleAuth
+      .performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+      })
+      .then(response => {
+        if (response.identityToken === null) {
+          throw new Error('Apple Sign-In failed - no identity token returned');
+        }
+
+        const { identityToken, nonce } = response;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+
+        return auth().signInWithCredential(appleCredential);
+      });
+  };
+
+  const logInWithGoogle = () => {
+    return GoogleSignin.signIn()
+      .then(user => {
+        const cred = auth.GoogleAuthProvider.credential(user.idToken);
+        return auth().signInWithCredential(cred);
+      })
+      .catch(error => {
+        if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+          dispatch({ type: 'playServicesMissingError' });
+        } else if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+          dispatch({ type: 'loginCancelled' });
+        } else {
+          dispatch({ type: 'loginError', errorCode: null });
+        }
+      });
+  };
+
+  useEffect(() => {
+    if (state.value === 'playServicesMissing') {
+      GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    }
+  }, [state.value]);
 
   return (
     <View style={tailwind('flex flex-col mt-10')}>
@@ -164,9 +151,7 @@ export const Login = (props: Props) => {
           initialValues={{ email: '', password: '' }}
           validationSchema={schema}
           validateOnMount
-          onSubmit={values => {
-            send({ type: 'submit', payload: values });
-          }}>
+          onSubmit={logInWithEmail}>
           {({ handleSubmit, isValid }) => (
             <>
               <TextInput
@@ -185,12 +170,12 @@ export const Login = (props: Props) => {
                 secureTextEntry
                 style={tailwind('w-full')}
               />
-              {state.context.errorCode === null ? (
+              {state.errorCode === null ? (
                 <View style={{ height: 40 }} />
               ) : (
                 <View style={tailwind('w-full border rounded-sm border-orange-800 bg-orange-100 py-2 px-3')}>
                   <Text style={tailwind('text-orange-800 text-base font-semibold')}>
-                    {getErrorMessage(state.context.errorCode)}
+                    {getErrorMessage(state.errorCode)}
                   </Text>
                 </View>
               )}
@@ -198,7 +183,7 @@ export const Login = (props: Props) => {
                 onPress={handleSubmit}
                 buttonStyle={[tailwind('bg-indigo-500 mt-2')]}
                 textStyle={tailwind('text-grey-100')}
-                disabled={!isValid || state.matches('submitting')}>
+                disabled={!isValid || state.value === 'submitting'}>
                 Login
               </Button>
               {appleAuth.isSupported ? (
@@ -207,16 +192,10 @@ export const Login = (props: Props) => {
                   buttonType={AppleButton.Type.SIGN_IN}
                   style={[tailwind('w-full mt-2'), { height: 48 }]}
                   cornerRadius={2}
-                  onPress={() => {
-                    send('loginWithApple');
-                  }}
+                  onPress={logInWithApple}
                 />
               ) : null}
-              <Button
-                onPress={() => {
-                  send('loginWithGoogle');
-                }}
-                buttonStyle={tailwind('mt-2 bg-white w-full flex flex-row')}>
+              <Button onPress={logInWithGoogle} buttonStyle={tailwind('mt-2 bg-white w-full flex flex-row')}>
                 <Image
                   source={require('../../images/g-logo.png')}
                   style={[tailwind('mr-2'), { height: 20, width: 20 }]}
