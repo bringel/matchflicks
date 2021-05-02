@@ -5,7 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
 import React, { useLayoutEffect } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, SafeAreaView, View } from 'react-native';
+import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 
 import { Container } from './components/Container';
@@ -15,6 +16,8 @@ import { OnboardingModal } from './screens/Onboarding/OnboardingModal';
 import { Signup } from './screens/Signup/Signup';
 import { UserTab } from './screens/UserTab/UserTab';
 import { getColor } from './tailwind';
+
+enableScreens();
 
 GoogleSignin.configure({
   webClientId: '479366644790-a4463vom1bpe4onn6kq6qop4avofruc8.apps.googleusercontent.com'
