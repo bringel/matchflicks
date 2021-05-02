@@ -1,7 +1,7 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import React, { useContext, useEffect, useMemo, useReducer } from 'react';
 
-import { MovieGenre, WatchProvider } from '../types/theMovieDB';
+import { MovieGenre, WatchProvider } from '../types/tmdb';
 import { useFirestoreDocument } from './useFirestoreDocument';
 
 export interface UserSettings {

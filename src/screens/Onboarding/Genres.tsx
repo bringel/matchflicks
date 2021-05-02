@@ -1,11 +1,14 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { useMovieGenres } from '../../services/tmdb';
 import { tailwind } from '../../tailwind';
 
 interface Props {}
 
 export const Genres = (props: Props) => {
+  const { data: genres } = useMovieGenres();
+
   return (
     <View style={tailwind('p-4')}>
       <Text style={tailwind('text-grey-100 text-xl mb-2')}>

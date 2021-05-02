@@ -5,9 +5,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigationProp, createStackNavigator } from '@react-navigation/stack';
 import React, { useLayoutEffect } from 'react';
-import { StatusBar, SafeAreaView, View } from 'react-native';
+import { StatusBar } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { Container } from './components/Container';
 import { AuthenticationContextProvider, useAuthenticationContext } from './firebase/AuthenticationContext';
@@ -89,14 +90,17 @@ const App = () => {
     </Container>
   );
 };
+const queryClient = new QueryClient();
 
 const WrappedApp = () => {
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <AuthenticationContextProvider>
-        <App />
-      </AuthenticationContextProvider>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer theme={navigationTheme}>
+        <AuthenticationContextProvider>
+          <App />
+        </AuthenticationContextProvider>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 };
 
